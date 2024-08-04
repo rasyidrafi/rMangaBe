@@ -18,12 +18,18 @@ let browser; // Declare a global variable for the browser instance
 
 // Initialize Puppeteer when the server starts
 async function initPuppeteer() {
-    browser = await puppeteer.launch({
-        args: chromium.args,
-        executablePath: await chromium.executablePath(),
-        headless: 'new',
-        ignoreHTTPSErrors: true
-    });
+    try {
+        console.log('Initializing Puppeteer...');
+        browser = await puppeteer.launch({
+            args: chromium.args,
+            executablePath: await chromium.executablePath(),
+            headless: 'new',
+            ignoreHTTPSErrors: true
+        });
+        console.log('Puppeteer initialized successfully.');
+    } catch (error) {
+        console.error('Error initializing Puppeteer:', error);
+    }
 }
 
 // Function to process the sidebar list items
@@ -109,6 +115,7 @@ app.get("/detail", async (req, res) => {
 
 const port = process.env.PORT || 3000;
 app.listen(port, async () => {
+    console.log('Starting server...');
     await initPuppeteer();
     console.log('Server is running on port ' + port);
 });

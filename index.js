@@ -55,7 +55,10 @@ const cacheRoot = async () => {
     }
 
     if (!browser) {
-        throw new Error('Puppeteer not initialized');
+        await initPuppeteer();
+        if (!browser) {
+            throw new Error('Puppeteer initialization failed.');
+        }
     }
 
     try {
@@ -116,7 +119,6 @@ app.get("/detail", async (req, res) => {
 const port = process.env.PORT || 3000;
 app.listen(port, async () => {
     console.log('Starting server...');
-    await initPuppeteer();
     console.log('Server is running on port ' + port);
 });
 

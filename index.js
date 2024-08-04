@@ -1,5 +1,6 @@
 const express = require('express');
-const puppeteer = require('puppeteer');
+const chromium = require('@sparticuz/chromium');
+const puppeteer = require('puppeteer-core');
 const cheerio = require('cheerio');
 const cors = require('cors');
 const NodeCache = require('node-cache');
@@ -20,7 +21,9 @@ async function initPuppeteer() {
     try {
         console.log('Initializing Puppeteer...');
         browser = await puppeteer.launch({
-            headless: true,
+            args: chromium.args,
+            executablePath: await chromium.executablePath(),
+            headless: 'new',
             ignoreHTTPSErrors: true
         });
         console.log('Puppeteer initialized successfully.');

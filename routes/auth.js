@@ -11,14 +11,22 @@ router.post('/register', async (req, res) => {
         return res.status(400).json({ message: 'Email and password are required' });
     }
 
-    const hashedPassword = await hashPassword(password);
     try {
+        // Check if email already exists
+        const existingUser = await usersDb.fetch({ email });
+        if (existingUser.count > 0) {
+            return res.status(400).json({ message: 'Email already in use' });
+        }
+
+        // Hash the password and store the new user
+        const hashedPassword = await hashPassword(password);
         const newUser = await usersDb.put({ email, password: hashedPassword });
         res.status(201).json({ message: 'User registered successfully', user: newUser });
     } catch (err) {
         res.status(500).json({ message: 'Error registering user', error: err.message });
     }
 });
+
 
 // Login a user
 router.post('/login', async (req, res) => {
@@ -28,7 +36,7 @@ router.post('/login', async (req, res) => {
     }
 
     try {
-        const user = await usersDb.fetch({ email }).next();
+        const user = await usersDb.fetch({ email });
         if (user.count === 0) {
             return res.status(404).json({ message: 'User not found' });
         }

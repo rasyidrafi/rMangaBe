@@ -7,6 +7,8 @@ const indexRoute = require('./routes/index');
 const popularRoute = require('./routes/popular');
 const terbaruRoute = require('./routes/terbaru');
 const genresRoute = require('./routes/genres');
+const authRoute = require('./routes/auth');
+const authMiddleware = require('./middleware/auth');
 
 const app = express();
 
@@ -14,10 +16,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/', indexRoute);
-app.use('/popular', popularRoute);
-app.use('/terbaru', terbaruRoute);
-app.use('/genres', genresRoute);
+// Auth routes
+app.use('/auth', authRoute);
+
+app.use('/', authMiddleware, indexRoute);
+app.use('/popular', authMiddleware,  popularRoute);
+app.use('/terbaru', authMiddleware, terbaruRoute);
+app.use('/genres', authMiddleware, genresRoute);
 
 const port = process.env.PORT || 3000;
 app.listen(port, async () => {
